@@ -7,7 +7,7 @@ import java.net.*;
 public class Listener extends Thread {
 
     /* The default port of the listener */
-    public static int DEFAULT_PORT = 1236;
+    public static int DEFAULT_PORT = 7777;
 
     /* The default buffer size of the listener */
     private static int BUFFER_SIZE  = 1024;
@@ -21,6 +21,10 @@ public class Listener extends Thread {
 
     /*flag to be set if system has to be shut down */
     private boolean shutdown = false;
+
+    private static final String NORMAL = "\033[m";
+    private static final String BLUE = "\033[34m";
+    private static final String GREEN = "\033[32m";
 
     /***
      * Constructor starting a listener on the default port.
@@ -76,15 +80,29 @@ public class Listener extends Thread {
 
                     // Kommandoverarbeitung
                     if(str.startsWith("!!PING!!")) {
+                        //TODO check must not answer broadcast
                         Sender.send(dp.getAddress(), port, "!!PONG!!" + str.substring(8));
                     } else if(str.startsWith("!!NOP!!")) {
                         // ignore NOPs
+                    } else if(str.startsWith("!!DISCOVERY!")) {
+                        Sender.send(dp.getAddress(), port, "!!DISCOVERYREPLY!!" + System.getProperty("user.name"));
+                    } else if(str.startsWith("!!CHAT!!")) {
+                        String nameText = str.substring(8);
+                        String name = nameText.substring(0, nameText.indexOf("!"));
+                        String text = nameText.substring(nameText.indexOf("!") +1);
+                        //TODO do not dislplay own message
+                        System.out.println(
+                                BLUE + "YAY got message! " + NORMAL +
+                                        " name: " + name +
+                                        " address: " + dp.getAddress() +
+                                        " message: " + text);
                     } else {
                         if(commandHandler!=null) {
                             commandHandler.processCommand(str);
                         } else {
                             System.out.println("ignored message:" + str);
                         }
+
                     }
 
                 } catch (IOException ie) {

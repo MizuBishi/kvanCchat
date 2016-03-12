@@ -15,6 +15,11 @@ public class Chatter {
     private static int VERSION_BUILD = 0;
     private static String VERSION  = "" + VERSION_MAYOR + "." + VERSION_MINOR + "." + VERSION_BUILD;
 
+    private static final String PINK = "\033[35m";
+    private static final String NORMAL = "\033[m";
+
+
+
     /**
      * Prints a usage message on the stdout stream.
      */
@@ -31,7 +36,7 @@ public class Chatter {
         usage();
 
         /* starting listener */
-        System.out.println("Starting Listener");
+        System.out.println(PINK + "Starting "+ NORMAL +" Listener");
         Listener listen = new Listener();
 
         /* sending a ping to localhost */
