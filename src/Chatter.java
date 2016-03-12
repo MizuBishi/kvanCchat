@@ -37,7 +37,7 @@ public class Chatter {
 
         /* starting listener */
         System.out.println(PINK + "Starting "+ NORMAL +" Listener");
-        Listener listen = new Listener();
+        Listener listen = new Listener(null);
 
         /* sending a ping to localhost */
         //send = true/false

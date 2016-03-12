@@ -5,7 +5,9 @@ public class Sender {
 
     public static boolean send(InetAddress ia, int port, String txt) {
         try {
-            System.out.println("Sending message \""+txt+"\" ("+ia.toString()+":"+port+")");
+            if(!txt.startsWith("!!DISCOVERY")) {
+                System.out.println("Sending message \"" + txt + "\" (" + ia.toString() + ":" + port + ")");
+            }
             DatagramSocket ds = new DatagramSocket();
             DatagramPacket dp = new DatagramPacket(txt.getBytes(), txt.length(), ia, port);
             ds.send(dp);

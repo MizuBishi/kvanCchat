@@ -39,9 +39,13 @@ public class CliClient {
         /* Print usage stream */
         usage();
 
+        /* starting UserTableThread */
+        System.out.println(PINK + "Starting "+ NORMAL +" UserTableThread");
+        UserTableThread userTableThread = new UserTableThread();
+
         /* starting listener */
         System.out.println(PINK + "Starting "+ NORMAL +" Listener");
-        Listener listen = new Listener();
+        Listener listen = new Listener(userTableThread);
 
 //read UserInput
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
@@ -70,9 +74,11 @@ public class CliClient {
         System.out.println("We're done.");
 
   /* shutting down listener */
-        System.out.println("Shutting down Listener");
+        System.out.println("Shutting down Listener & userTableThread");
         listen.shutdown();
+        userTableThread.shutdown();
         System.out.println("CliClient has shutdown");
+
     }
 }
 

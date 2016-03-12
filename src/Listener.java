@@ -15,6 +15,7 @@ public class Listener extends Thread {
     /* the current port beeing used */
     private int port;
     private InetAddress addr;
+    private UserTableThread userTableThread;
 
     /* The handler for incomming commands */
     private CommandHandler commandHandler=null;
@@ -29,15 +30,15 @@ public class Listener extends Thread {
     /***
      * Constructor starting a listener on the default port.
      */
-    public Listener() {
-        init(null,DEFAULT_PORT);
+    public Listener(UserTableThread userTableThread) {
+        init(userTableThread, null, DEFAULT_PORT);
     }
 
     /***
      * Constructor starting a listener on a user defined socket.
      */
-    public Listener(InetAddress addr,int port)  {
-        init(addr,port);
+    public Listener(UserTableThread userTableThread, InetAddress addr,int port)  {
+        init(userTableThread, addr,port);
     }
 
     /***
@@ -45,7 +46,8 @@ public class Listener extends Thread {
      *
      * @param port Port for the listener to start
      */
-    private void init(InetAddress addr,int port) {
+    private void init(UserTableThread userTableThread, InetAddress addr,int port) {
+        this.userTableThread = userTableThread;
         this.port=port;
         this.addr=addr;
         this.start();
@@ -75,8 +77,10 @@ public class Listener extends Thread {
 
                     String str = new String(dp.getData(), 0, dp.getLength());
 
-                    // Dump message to screen
-                    System.out.println("got message:" + str);
+                    if(!str.startsWith("!!DISCOVERY")) {
+                        // Dump message to screen
+                        System.out.println("got message:" + str);
+                    }
 
                     // Kommandoverarbeitung
                     if(str.startsWith("!!PING!!")) {
@@ -86,6 +90,9 @@ public class Listener extends Thread {
                         // ignore NOPs
                     } else if(str.startsWith("!!DISCOVERY!")) {
                         Sender.send(dp.getAddress(), port, "!!DISCOVERYREPLY!!" + System.getProperty("user.name"));
+                    } else if(str.startsWith("!!DISCOVERYREPLY!!")) {
+                        String userName = str.substring("!!DISCOVERYREPLY!!".length());
+                        userTableThread.updateUserStatus(userName, dp.getAddress());
                     } else if(str.startsWith("!!CHAT!!")) {
                         String nameText = str.substring(8);
                         String name = nameText.substring(0, nameText.indexOf("!"));
