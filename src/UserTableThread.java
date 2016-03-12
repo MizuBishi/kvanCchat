@@ -14,6 +14,7 @@ public class UserTableThread extends Thread {
     private static final String NORMAL = "\033[m";
     private static final String BLUE = "\033[34m";
     private static final String GREEN = "\033[32m";
+    private static final String RED = "\033[31m";
 
     private List<UserStatus> userTable = new ArrayList<>();
 
@@ -46,6 +47,7 @@ public class UserTableThread extends Thread {
         }
     }
 
+
     public void run() {
         while (!shutdown) {
             try {
@@ -63,9 +65,9 @@ public class UserTableThread extends Thread {
             for (UserStatus userStatus : userTable) {
                 boolean online = new Date().getTime() - userStatus.getUpdate().getTime() < 6000;
                 if (online) {
-                    System.out.println(userStatus + " : " + GREEN + "online" + NORMAL);
+                    System.out.println(BLUE + userStatus.getUserName() + NORMAL + userStatus.getIp() + " : " + GREEN + "online" + NORMAL);
                 } else {
-                    System.out.println(userStatus + " : offline");
+                    System.out.println(BLUE + userStatus.getUserName() + NORMAL + userStatus.getIp() + ": " + RED + "offline" + NORMAL);
                 }
             }
         }
